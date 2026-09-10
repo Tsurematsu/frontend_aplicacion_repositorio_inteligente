@@ -9,7 +9,6 @@ import {
   Lock,
   Mail,
   ShieldCheck,
-  Sparkles,
   UserPlus,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -128,10 +127,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess, onRegister })
           </div>
 
           <div className="login-badge-wrap">
-            <span className="login-admin-badge">
-              <Sparkles size={13} /> ACCESO INSTITUCIONAL
-            </span>
-
             <div
               className={`login-server-status status-${backendStatus}`}
               title={backendMessage}

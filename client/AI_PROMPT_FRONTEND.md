@@ -184,13 +184,53 @@ const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
 | | `api.addUrlToComparativa(id, url)` | Agrega una URL al array |
 | | `api.removeUrlFromComparativa(id, url)` | Quita una URL del array |
 | | `api.deleteComparativa(id)` | Elimina comparativa |
-| **Gemini AI** | `api.askGemini({ prompt, context, ... })` | Consulta IA Gemini mediante backend |
+| **Gemini AI** | `api.askGemini({ prompt, context, ... })` | Consulta IA Gemini directa mediante backend |
 | | `api.getGeminiStatus()` | Estado del servicio Gemini AI |
+| | `createChatBot(config?)` | Instancia un motor de conversación natural con memoria |
+| | `chatBot.sendMessage(text)` | Envía mensaje multi-turno al bot con historial y contexto |
 | **Salud** | `api.getHealth()` | Healthcheck del backend |
 
 ---
 
-## 5. Control de Errores Tipado
+## 5. Chatbot de Conversación Natural (`GeminiChatBot`)
+
+El cliente incluye [`GeminiChatBot`](./GeminiChatBot.ts), diseñado para mantener conversaciones fluidas, coherentes y empáticas con el usuario a través del endpoint `/api/gemini` sin requerir modificaciones en el backend.
+
+### Características:
+1. **Memoria multi-turno automática**: Mantiene el contexto de diálogo reciente mediante una ventana deslizante (*sliding window*).
+2. **Personalidad conversacional**: Respeta las reglas de diálogo natural (español fluido, empatía, sin frases robóticas, soporte de Markdown).
+3. **Inyección de contexto**: Permite agregar información de documentos, categorías y perfil de usuario.
+4. **Persistencia local**: Guarda y restaura el chat desde `localStorage` opcionalmente.
+
+### Ejemplo de uso en TypeScript / React:
+```typescript
+import { createChatBot, GeminiChatBot } from './client';
+import { api } from './services/api';
+
+// 1. Instanciar el bot
+const bot = createChatBot({
+  client: api,
+  botName: 'DocuHub AI',
+  userName: 'Carlos',
+  userRole: 'Administrador'
+});
+
+// 2. Suscribirse a cambios en la UI
+const unsubscribe = bot.subscribe((messages, status) => {
+  console.log('Mensajes actuales:', messages);
+  console.log('Estado:', status); // 'idle' | 'thinking' | 'error'
+});
+
+// 3. Enviar mensaje de forma natural
+await bot.sendMessage('Hola, ¿puedes explicarme qué documentos de finanzas tenemos?');
+
+// 4. Inyectar contexto dinámico de un documento
+bot.setContext('Documento seleccionado: Balance General 2026. Resumen: Margen operacional del 24%');
+await bot.sendMessage('¿Cuál fue el margen operacional que reportamos?');
+```
+
+
+## 6. Control de Errores Tipado
 
 Cuando cualquier petición falla (código HTTP 400, 401, 403, 404, 500, etc.) o hay pérdida de conexión a internet, se lanza una excepción de tipo [`ApiClientError`](./ApiClient.ts):
 

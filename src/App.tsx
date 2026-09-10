@@ -9,6 +9,7 @@ import { RegisterWithInvitation } from "./components/RegisterWithInvitation";
 import { Sidebar } from "./components/Sidebar";
 import { Topbar } from "./components/Topbar";
 import { UploadModal } from "./components/UploadModal";
+import { ChatBotWidget } from "./components/ChatBotWidget";
 import { AuthProvider } from "./context/AuthProvider";
 import { useAuth } from "./context/AuthContext";
 import { categories as defaultCategories, documents as initialDocuments } from "./data/documents";
@@ -367,6 +368,10 @@ function MainContent() {
           </button>
         </div>
       )}
+      <ChatBotWidget
+        activeDocument={activeDocument}
+        activeCategory={activeCategory}
+      />
     </div>
   );
 }
